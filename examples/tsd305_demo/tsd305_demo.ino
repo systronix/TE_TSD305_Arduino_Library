@@ -1,13 +1,37 @@
+/*
+Adapting the TSD305 demo program to work on the TE Weathershield
+
+I2C lines go through a MUX on the Weathershield so a given sensor has to be 'selected' via the MUX.
+
+Revisions
+2019Apr03 bboyes  start
+
+*/
+
 #include <tsd305.h>
 
 tsd305 m_tsd305;
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);     // use max baud rate
+  
+  // Teensy3 doesn't reset with Serial Monitor as do Teensy2/++2, or wait for Serial Monitor window
+  // Wait here for 10 seconds to see if we will use Serial Monitor, so output is not lost
+  while((!Serial) && (millis()<10000));    // wait until serial monitor is open or timeout
 
   Serial.println("==== TE Connectivity ====");
   Serial.println("======== TSD305 =========");
   Serial.println("======== Measure ========");
+
+  // WeatherShield MUX control pins
+  pinMode(9, OUTPUT);
+  pinMode(10, OUTPUT);
+  pinMode(11, OUTPUT);
+
+  // MUX select TSD305
+  digitalWrite(9, LOW);
+  digitalWrite(10, HIGH);
+  digitalWrite(11, HIGH);  
 
   m_tsd305.begin();
 }
@@ -27,12 +51,12 @@ void loop() {
 
     Serial.print("---Temperature = ");
     Serial.print(temperature, 1);
-    Serial.print((char)176);
+    // Serial.print((char)176); // should be degree symbol but doesn't work in TyCommander serial window
     Serial.println("C");
 
     Serial.print("---Object Temperature = ");
     Serial.print(object_temperature, 1);
-    Serial.print((char)176);
+    // Serial.print((char)176);
     Serial.println("C");
     Serial.println();
   } else {

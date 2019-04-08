@@ -1,8 +1,4 @@
-#if defined(ARDUINO) && ARDUINO >= 100
 #include "Arduino.h"
-#else
-#include "WProgram.h"
-#endif
 
 enum tsd305_status {
   tsd305_status_ok,
